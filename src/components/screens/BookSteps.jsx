@@ -12,61 +12,88 @@ import CountUp from "../shared/CountUp.jsx";
 
 function StepProgress({ current }) {
   const steps = ["Servicio", "Horario", "Confirmar"];
+  const pct = Math.round(((current + 1) / steps.length) * 100);
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: EASE }}
-      style={{ display: "flex", alignItems: "center", marginBottom: 20 }}
+      style={{ marginBottom: 22 }}
     >
-      {steps.map((label, i) => {
-        const done = i < current;
-        const active = i === current;
-        return (
-          <React.Fragment key={label}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ ...SPRING_SNAPPY, delay: 0.08 + i * 0.08 }}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 }}>
+        <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkFaint, letterSpacing: 1.2 }}>
+          PASO {current + 1} DE {steps.length}
+        </span>
+        <motion.span
+          key={pct}
+          initial={{ scale: 0.7, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={SPRING_SNAPPY}
+          style={{ fontFamily: T.fontDisplay, fontWeight: 700, fontSize: 14, color: T.primary }}
+        >
+          {pct}%
+        </motion.span>
+      </div>
+      <div style={{ display: "flex", gap: 6 }}>
+        {steps.map((label, i) => {
+          const done = i < current;
+          const active = i === current;
+          return (
+            <motion.div
+              key={label}
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ ...SPRING_SNAPPY, delay: 0.12 + i * 0.08 }}
+              style={{
+                flex: 1,
+                height: 46,
+                borderRadius: T.rMd,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 7,
+                background: done ? `linear-gradient(135deg, ${T.primary} 0%, ${T.primaryDark} 100%)` : active ? T.primarySoft : "#F0E9DC",
+                boxShadow: done ? `0 8px 18px -8px ${T.primary}` : "none",
+                position: "relative",
+              }}
+            >
+              {done ? (
+                <Check size={13} strokeWidth={3.5} color="#fff" />
+              ) : (
+                <span
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: 999,
+                    background: active ? "#fff" : "transparent",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: T.fontMono,
+                    fontSize: 10.5,
+                    fontWeight: 600,
+                    color: active ? T.primary : T.inkFaint,
+                  }}
+                >
+                  {i + 1}
+                </span>
+              )}
+              <span
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 999,
-                  background: done || active ? T.primary : "#E7E4DB",
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
+                  fontFamily: T.fontBody,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: done ? "#fff" : active ? T.primary : T.inkFaint,
+                  whiteSpace: "nowrap",
                 }}
               >
-                {done ? (
-                  <Check size={13} strokeWidth={3.5} />
-                ) : (
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11.5, fontWeight: 700, color: active ? "#fff" : "#A8A49A" }}>
-                    {i + 1}
-                  </span>
-                )}
-                {active && <span className="anim-ring" style={{ position: "absolute", inset: -4, borderRadius: 999, background: "transparent" }} />}
-              </motion.span>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 9.5, fontWeight: 600, color: active ? T.primary : done ? T.inkSoft : "#A8A49A", transition: `color ${T.tBase}` }}>
                 {label}
               </span>
-            </div>
-            {i < steps.length - 1 && (
-              <div style={{ flex: 1, height: 3, borderRadius: 2, background: T.line, margin: "0 6px 17px", overflow: "hidden", minWidth: 12 }}>
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: done ? 1 : 0 }}
-                  transition={{ duration: 0.4, ease: EASE, delay: 0.12 + i * 0.1 }}
-                  style={{ transformOrigin: "left", height: "100%", background: T.primary }}
-                />
-              </div>
-            )}
-          </React.Fragment>
-        );
-      })}
+              {active && <span className="anim-ring" style={{ position: "absolute", inset: -3, borderRadius: T.rMd, background: "transparent" }} />}
+            </motion.div>
+          );
+        })}
+      </div>
     </motion.div>
   );
 }
@@ -82,32 +109,33 @@ export function BookStepService({ onBack, onSelect }) {
     setTimeout(() => {
       onSelect(s);
       picking.current = false;
-    }, 240);
+    }, 260);
   };
 
   return (
     <>
-      <BackRow onBack={onBack} title="Elegí tu servicio" sub="Elegí y confirmá en menos de un minuto" />
+      <BackRow onBack={onBack} title="Elegí tu servicio" sub="Listo en menos de un minuto" />
       <StepProgress current={0} />
-      <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.06 } } }} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.07 } } }} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
         {SERVICES.map((s) => {
           const isSel = selected === s.id;
           return (
             <motion.div key={s.id} variants={listItem}>
               <Pressable
                 onPress={() => handleSelect(s)}
-                lift={3}
+                lift={4}
                 style={{
                   width: "100%",
                   textAlign: "left",
                   display: "flex",
                   alignItems: "center",
-                  gap: 12,
+                  gap: 13,
                   cursor: "pointer",
-                  borderRadius: 18,
-                  padding: 14,
-                  background: isSel ? "#F0F8F5" : T.surface,
+                  borderRadius: T.rLg,
+                  padding: 16,
+                  background: isSel ? "linear-gradient(135deg, #F7EBF2 0%, #F3E2EC 100%)" : T.gradCard,
                   border: isSel ? `1.5px solid ${T.primary}` : `1px solid ${T.line}`,
+                  boxShadow: isSel ? T.shadowCard : T.shadowXs,
                   transition: `background ${T.tBase} ${T.easeOut}, border-color ${T.tBase} ${T.easeOut}`,
                 }}
               >
@@ -115,24 +143,25 @@ export function BookStepService({ onBack, onSelect }) {
                   animate={isSel ? { scale: [1, 1.12, 1] } : {}}
                   transition={{ duration: 0.35 }}
                   style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
+                    width: 48,
+                    height: 48,
+                    borderRadius: 17,
                     background: isSel ? T.primary : T.accentSoft,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
+                    boxShadow: isSel ? `0 6px 14px -6px ${T.primary}` : "none",
                   }}
                 >
-                  <s.icon size={20} color={isSel ? "#fff" : T.accentDark} />
+                  <s.icon size={21} color={isSel ? "#fff" : T.accentDark} />
                 </motion.div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: 13.5, color: T.ink }}>{s.name}</div>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11.5, color: T.inkSoft, marginTop: 1 }}>{s.desc} · {s.mins} min</div>
+                  <div style={{ fontFamily: T.fontDisplay, fontWeight: 600, fontSize: 16, color: T.ink, letterSpacing: -0.2 }}>{s.name}</div>
+                  <div style={{ fontFamily: T.fontBody, fontSize: 11.5, color: T.inkSoft, marginTop: 2 }}>{s.desc} · {s.mins} min</div>
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 600, color: T.primary }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5 }}>
+                  <span style={{ fontFamily: T.fontMono, fontSize: 13.5, fontWeight: 600, color: T.primary, fontVariantNumeric: "tabular-nums" }}>
                     $<CountUp value={s.price} duration={500} />
                   </span>
                   {isSel && (
@@ -141,8 +170,8 @@ export function BookStepService({ onBack, onSelect }) {
                       animate={{ scale: 1 }}
                       transition={SPRING_SNAPPY}
                       style={{
-                        width: 18,
-                        height: 18,
+                        width: 19,
+                        height: 19,
                         borderRadius: 999,
                         background: T.primary,
                         color: "#fff",
@@ -151,7 +180,7 @@ export function BookStepService({ onBack, onSelect }) {
                         justifyContent: "center",
                       }}
                     >
-                      <Check size={11} strokeWidth={3.5} />
+                      <Check size={12} strokeWidth={3.5} />
                     </motion.span>
                   )}
                 </div>
@@ -175,7 +204,7 @@ export function BookStepTime({ service, onBack, onSelect }) {
     setTimeout(() => {
       onSelect(t);
       picking.current = false;
-    }, 240);
+    }, 260);
   };
 
   return (
@@ -185,8 +214,8 @@ export function BookStepTime({ service, onBack, onSelect }) {
       <motion.div
         initial="hidden"
         animate="show"
-        variants={{ show: { transition: { staggerChildren: 0.045 } } }}
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9 }}
+        variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}
       >
         {TIME_SLOTS.map((t) => {
           const isSel = selected === t;
@@ -197,16 +226,26 @@ export function BookStepTime({ service, onBack, onSelect }) {
                 lift={3}
                 style={{
                   width: "100%",
-                  padding: "14px 6px",
+                  padding: "15px 6px",
                   textAlign: "center",
                   cursor: "pointer",
-                  borderRadius: 13,
-                  background: isSel ? T.primary : T.surface,
-                  border: isSel ? `1.5px solid ${T.primary}` : `1px solid ${T.line}`,
+                  borderRadius: T.rMd,
+                  background: isSel ? `linear-gradient(135deg, ${T.primary} 0%, ${T.primaryDark} 100%)` : T.gradCard,
+                  border: isSel ? "none" : `1px solid ${T.line}`,
+                  boxShadow: isSel ? T.shadowBtn : T.shadowXs,
                   transition: `background ${T.tBase} ${T.easeOut}, border-color ${T.tBase} ${T.easeOut}`,
                 }}
               >
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 600, fontSize: 13, color: isSel ? "#fff" : T.ink, transition: `color ${T.tBase}` }}>
+                <span
+                  style={{
+                    fontFamily: T.fontMono,
+                    fontWeight: 600,
+                    fontSize: 13.5,
+                    color: isSel ? "#fff" : T.ink,
+                    fontVariantNumeric: "tabular-nums",
+                    transition: `color ${T.tBase}`,
+                  }}
+                >
                   {t}
                 </span>
               </Pressable>
@@ -226,19 +265,19 @@ export function BookStepConfirm({ service, time, vehicle, setVehicle, onBack, on
     <>
       <BackRow onBack={onBack} title="Confirmá tu reserva" sub={`${service?.name} · ${time}`} />
       <StepProgress current={2} />
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }} style={card}>
-        <Row label="Servicio" value={service?.name} />
-        <Row label="Horario" value={time} />
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, ease: EASE }} style={card}>
+        <Row label="Servicio" value={service?.name} strong />
+        <Row label="Horario" value={time} divider />
         <Row label="Duración" value={`${service?.mins} min`} />
-        <div style={{ height: 1, background: T.line, margin: "10px 0" }} />
+        <div style={{ height: 1, background: T.line, margin: "12px 0" }} />
         <label
           htmlFor="vehicle"
           style={{
-            fontFamily: "Inter, sans-serif",
-            fontSize: 11,
-            color: focused ? T.primary : T.inkSoft,
+            fontFamily: T.fontMono,
+            fontSize: 10,
+            color: focused ? T.primary : T.inkFaint,
             fontWeight: 600,
-            letterSpacing: 0.4,
+            letterSpacing: 1.2,
             transition: `color ${T.tBase}`,
           }}
         >
@@ -252,31 +291,32 @@ export function BookStepConfirm({ service, time, vehicle, setVehicle, onBack, on
           onBlur={() => setFocused(false)}
           animate={{
             borderColor: focused ? T.primary : T.line,
-            boxShadow: focused ? `0 0 0 3.5px ${T.primarySoft}` : "0 0 0 0px rgba(220,234,230,0)",
+            boxShadow: focused ? `0 0 0 4px ${T.primarySoft}` : "0 0 0 0px rgba(243,226,236,0)",
           }}
-          transition={{ duration: 0.25, ease: EASE }}
+          transition={{ duration: 0.28, ease: EASE }}
           style={{
             width: "100%",
-            marginTop: 7,
-            padding: "11px 12px",
-            borderRadius: 10,
+            marginTop: 8,
+            padding: "12px 14px",
+            borderRadius: T.rSm,
             border: "1px solid",
             background: T.surface,
-            fontFamily: "Inter, sans-serif",
-            fontSize: 13,
+            fontFamily: T.fontBody,
+            fontSize: 13.5,
             color: T.ink,
             outline: "none",
             boxSizing: "border-box",
+            transition: `background ${T.tBase}`,
           }}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 13, borderTop: `1px solid ${T.line}` }}>
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: T.ink }}>Total (con desc. Oro)</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 15, paddingTop: 14, borderTop: `1px solid ${T.line}` }}>
+          <span style={{ fontFamily: T.fontBody, fontSize: 13, fontWeight: 700, color: T.ink }}>Total (con desc. Oro)</span>
           <motion.span
             key={total}
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={SPRING_SNAPPY}
-            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 16, fontWeight: 700, color: T.primary }}
+            style={{ fontFamily: T.fontDisplay, fontWeight: 700, fontSize: 20, color: T.primary, fontVariantNumeric: "tabular-nums" }}
           >
             $<CountUp value={total} />
           </motion.span>
@@ -284,21 +324,15 @@ export function BookStepConfirm({ service, time, vehicle, setVehicle, onBack, on
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: EASE, delay: 0.08 }}
+        transition={{ duration: 0.42, ease: EASE, delay: 0.1 }}
       >
         <RippleButton
           onPress={onConfirm}
           disabled={loading}
           className="press-cta"
-          style={{
-            ...primaryBtn,
-            opacity: loading ? 0.75 : 1,
-            marginTop: 18,
-            gap: 8,
-            boxShadow: "0 14px 28px -14px rgba(14,75,67,0.7)",
-          }}
+          style={{ ...primaryBtn, opacity: loading ? 0.75 : 1, marginTop: 20, gap: 9 }}
         >
           {loading ? (
             <>
@@ -307,7 +341,7 @@ export function BookStepConfirm({ service, time, vehicle, setVehicle, onBack, on
             </>
           ) : (
             <>
-              Confirmar reserva <ArrowRight size={15} />
+              Confirmar reserva <ArrowRight size={16} />
             </>
           )}
         </RippleButton>

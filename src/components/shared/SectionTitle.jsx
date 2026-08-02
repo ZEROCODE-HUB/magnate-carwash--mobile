@@ -3,25 +3,32 @@ import { motion } from "framer-motion";
 import { T } from "../../theme.js";
 import { itemVariants } from "../../motion.js";
 
-export default function SectionTitle({ children, sub, style }) {
+// Título de sección — serif Fraunces cálido + barra ámbar
+export default function SectionTitle({ children, sub, accent, style }) {
   return (
-    <motion.div variants={itemVariants} style={{ marginBottom: 14, ...style }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+    <motion.div variants={itemVariants} style={{ marginBottom: 16, ...style }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span
           style={{
-            width: 20,
-            height: 3,
-            borderRadius: 2,
-            background: `linear-gradient(90deg, ${T.accent}, ${T.accentDark})`,
+            width: 26,
+            height: 4,
+            borderRadius: 999,
+            background: `linear-gradient(90deg, ${T.accentBright}, ${T.accentDark})`,
             flexShrink: 0,
           }}
         />
-        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 18.5, color: T.ink, letterSpacing: -0.3 }}>
+        <h2 style={{ fontFamily: T.fontDisplay, fontWeight: 600, fontSize: 24, color: T.ink, letterSpacing: -0.4, lineHeight: 1.15 }}>
           {children}
-        </div>
+          {accent && (
+            <>
+              {" "}
+              <em style={{ fontStyle: "italic", color: T.primary, fontWeight: 600 }}>{accent}</em>
+            </>
+          )}
+        </h2>
       </div>
       {sub && (
-        <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12.5, color: T.inkSoft, marginTop: 4, paddingLeft: 28 }}>
+        <div style={{ fontFamily: T.fontBody, fontSize: 12.5, color: T.inkSoft, marginTop: 5, paddingLeft: 36 }}>
           {sub}
         </div>
       )}

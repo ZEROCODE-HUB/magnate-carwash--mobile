@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { T } from "../../theme.js";
 import { itemVariants, SPRING_SNAPPY } from "../../motion.js";
 
-export function Row({ label, value, divider }) {
+export function Row({ label, value, divider, strong }) {
   return (
     <div
       style={{
@@ -12,12 +12,21 @@ export function Row({ label, value, divider }) {
         justifyContent: "space-between",
         alignItems: "center",
         gap: 12,
-        padding: divider ? "7px 0" : "5px 0",
+        padding: divider ? "8px 0" : "5px 0",
         borderBottom: divider ? `1px solid ${T.line}` : "none",
       }}
     >
-      <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12.5, color: T.inkSoft }}>{label}</span>
-      <span style={{ fontFamily: "Inter, sans-serif", fontSize: 12.5, fontWeight: 600, color: T.ink, textAlign: "right" }}>
+      <span style={{ fontFamily: T.fontBody, fontSize: 12.5, color: T.inkSoft }}>{label}</span>
+      <span
+        style={{
+          fontFamily: T.fontBody,
+          fontSize: strong ? 14.5 : 12.5,
+          fontWeight: strong ? 700 : 600,
+          color: strong ? T.primary : T.ink,
+          textAlign: "right",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
         {value}
       </span>
     </div>
@@ -26,7 +35,7 @@ export function Row({ label, value, divider }) {
 
 export function BackRow({ onBack, title, sub, style }) {
   return (
-    <motion.div variants={itemVariants} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 14, ...style }}>
+    <motion.div variants={itemVariants} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, ...style }}>
       <motion.button
         onClick={onBack}
         whileHover={{ x: -2 }}
@@ -34,9 +43,9 @@ export function BackRow({ onBack, title, sub, style }) {
         transition={SPRING_SNAPPY}
         aria-label="Volver"
         style={{
-          width: 34,
-          height: 34,
-          borderRadius: 11,
+          width: 38,
+          height: 38,
+          borderRadius: T.rMd,
           background: T.surface,
           border: `1px solid ${T.line}`,
           display: "flex",
@@ -44,17 +53,17 @@ export function BackRow({ onBack, title, sub, style }) {
           justifyContent: "center",
           cursor: "pointer",
           flexShrink: 0,
-          boxShadow: "0 1px 2px rgba(22,34,31,0.04), 0 4px 12px -6px rgba(14,75,67,0.3)",
+          boxShadow: T.shadowXs,
         }}
       >
-        <ChevronLeft size={17} color={T.ink} />
+        <ChevronLeft size={19} color={T.ink} />
       </motion.button>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16.5, color: T.ink, letterSpacing: -0.2 }}>
+        <div style={{ fontFamily: T.fontDisplay, fontWeight: 600, fontSize: 21, color: T.ink, letterSpacing: -0.4, lineHeight: 1.15 }}>
           {title}
         </div>
         {sub && (
-          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11.5, color: T.inkSoft, marginTop: 1, opacity: 0.85 }}>
+          <div style={{ fontFamily: T.fontBody, fontSize: 11.5, color: T.inkSoft, marginTop: 2, opacity: 0.85 }}>
             {sub}
           </div>
         )}

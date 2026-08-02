@@ -21,25 +21,26 @@ export default function StatusStepper({ status }) {
               animate={{ scale: 1 }}
               transition={{ ...SPRING_SNAPPY, delay: 0.08 + i * 0.05 }}
               style={{
-                width: 22,
-                height: 22,
+                width: 24,
+                height: 24,
                 borderRadius: 999,
                 flexShrink: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: done || current ? T.primary : "#E7E4DB",
+                background: done || current ? T.primary : "#E8DECD",
                 color: "#fff",
                 position: "relative",
                 zIndex: 1,
+                boxShadow: done || current ? `0 4px 10px -4px ${T.primary}` : "none",
               }}
             >
               {done ? (
-                <Check size={11} strokeWidth={3.5} />
+                <Check size={12} strokeWidth={3.5} />
               ) : current && CurrentIcon ? (
-                <CurrentIcon size={10} strokeWidth={2.5} />
+                <CurrentIcon size={11} strokeWidth={2.5} />
               ) : (
-                <span style={{ width: 4.5, height: 4.5, borderRadius: 999, background: "#C9C5B9" }} />
+                <span style={{ width: 5, height: 5, borderRadius: 999, background: "#CBBFA9" }} />
               )}
               {current && (
                 <span

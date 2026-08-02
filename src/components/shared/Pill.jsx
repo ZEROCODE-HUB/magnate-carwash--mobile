@@ -1,4 +1,5 @@
 import React from "react";
+import { T } from "../../theme.js";
 
 export default function Pill({ children, bg, color, style, dot }) {
   return (
@@ -7,16 +8,16 @@ export default function Pill({ children, bg, color, style, dot }) {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
-        padding: "4.5px 11px",
+        padding: "5px 12px",
         borderRadius: 999,
         background: bg,
         color,
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: T.fontMono,
         fontSize: 10.5,
         fontWeight: 600,
-        letterSpacing: 0.3,
+        letterSpacing: 0.4,
         whiteSpace: "nowrap",
-        boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.03)",
+        boxShadow: "inset 0 0 0 1px rgba(36,24,16,0.04)",
         ...style,
       }}
     >

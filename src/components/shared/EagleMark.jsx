@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { SPRING_SNAPPY } from "../../motion.js";
 
-export default function EagleMark({ size = 22, color = "#E8A93B", animate = true }) {
+export default function EagleMark({ size = 22, color = "#F0A93B", animate = true }) {
   const inner = (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
       <path
