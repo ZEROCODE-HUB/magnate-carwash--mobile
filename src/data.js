@@ -1,5 +1,6 @@
 import { Car, Coffee, UtensilsCrossed, ShoppingBag, Droplets, Wind, Sparkles,
-  CircleDot, TimerReset, CheckCircle2, Crown, Award, Medal } from "lucide-react";
+  CircleDot, TimerReset, CheckCircle2, Crown, Award, Medal, Shield, Zap,
+  Sun, Gauge, Feather, Brush, Leaf, Flower2, Cog, Trophy } from "lucide-react";
 import { T } from "./theme.js";
 
 export const STATUS_FLOW = ["Reservado", "Recibido", "Lavando", "Aspirado", "Detailing", "Secado", "Listo"];
@@ -15,10 +16,79 @@ export const STATUS_META = {
 };
 
 export const SERVICES = [
-  { id: "basico", name: "Lavado Básico", desc: "Exterior + secado", price: 8000, mins: 20, icon: Droplets },
-  { id: "premium", name: "Lavado Premium", desc: "Exterior, interior y aspirado", price: 14000, mins: 35, icon: Sparkles },
-  { id: "encerado", name: "Encerado", desc: "Premium + cera protectora", price: 20000, mins: 50, icon: Wind },
+  {
+    id: "basico",
+    name: "Lavado Básico",
+    desc: "Exterior + secado",
+    tagline: "Lo esencial para que salgas impecable.",
+    price: 8000,
+    mins: 20,
+    icon: Droplets,
+    gradient: ["#7C3057", "#57223E", "#3E152B"],
+    glow: "rgba(240,169,59,0.32)",
+    features: [
+      { label: "Lavado exterior con espuma activa", icon: Droplets },
+      { label: "Secado con toalla suave", icon: Wind },
+      { label: "Limpieza de llantas", icon: CircleDot },
+    ],
+    addons: [
+      { id: "brillo", name: "Llanta brillante", desc: "Líquido protector que hace lucir tus llantas como nuevas", price: 2000, icon: Sun },
+      { id: "vidrios", name: "Vidrios cristal", desc: "Limpieza exterior e interior de cristales sin manchas", price: 1500, icon: Zap },
+    ],
+  },
+  {
+    id: "premium",
+    name: "Lavado Premium",
+    desc: "Exterior, interior y aspirado",
+    tagline: "El favorito: tu auto brilla por dentro y por fuera.",
+    price: 14000,
+    mins: 35,
+    icon: Sparkles,
+    gradient: ["#8A5BA8", "#6A2A4E", "#3E152B"],
+    glow: "rgba(122,91,184,0.4)",
+    features: [
+      { label: "Todo lo del Básico", icon: CheckCircle2 },
+      { label: "Aspirado completo interior", icon: Gauge },
+      { label: "Tablero y plásticos limpios", icon: Cog },
+      { label: "Detalle de puertas y umbrales", icon: Brush },
+    ],
+    addons: [
+      { id: "cera", name: "Cera protectora", desc: "Capa de cera que protege la pintura y le da brillo espejo", price: 4000, icon: Shield },
+      { id: "aroma", name: "Aroma a elección", desc: "Perfume suave de larga duración para el interior", price: 1500, icon: Flower2 },
+      { id: "motor", name: "Motor a vapor", desc: "Limpieza profunda del motor, sin riesgo con electrónica", price: 3000, icon: Leaf },
+    ],
+  },
+  {
+    id: "encerado",
+    name: "Encerado Premium",
+    desc: "Premium + cera protectora",
+    tagline: "El mimo total. Tratamiento completo que se nota.",
+    price: 20000,
+    mins: 50,
+    icon: Wind,
+    gradient: ["#C67E16", "#8A5B2E", "#3E152B"],
+    glow: "rgba(240,169,59,0.4)",
+    features: [
+      { label: "Todo lo del Premium", icon: CheckCircle2 },
+      { label: "Encerado a mano con cera de carnauba", icon: Shield },
+      { label: "Protección y brillo profundo", icon: Trophy },
+      { label: "Repaso final a detalle", icon: Feather },
+    ],
+    addons: [
+      { id: "hidro", name: "Tratamiento hidrofugante", desc: "El agua escurre sola y la pintura queda más fácil de cuidar", price: 5000, icon: Droplets },
+      { id: "opticas", name: "Pulido de ópticas", desc: "Lentes y faros con menos amarillento y mejor visibilidad", price: 3500, icon: Sun },
+    ],
+  },
 ];
+
+// Total de una configuración: base con descuento de nivel + sumatoria de agregados
+export function computeTotal(service, addonIds = [], { discount = 0.15 } = {}) {
+  const base = Math.round(service.price * (1 - discount));
+  const addons = (service.addons || [])
+    .filter((a) => addonIds.includes(a.id))
+    .reduce((sum, a) => sum + a.price, 0);
+  return { base, addons, total: base + addons };
+}
 
 export const TIME_SLOTS = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00"];
 

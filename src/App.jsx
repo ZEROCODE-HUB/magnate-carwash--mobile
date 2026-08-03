@@ -6,7 +6,7 @@ import { TIER_META } from "./data.js";
 import { screenVariants, EASE, SPRING_SNAPPY } from "./motion.js";
 import EagleMark from "./components/shared/EagleMark.jsx";
 import HomeScreen from "./components/screens/HomeScreen.jsx";
-import { BookStepService, BookStepTime, BookStepConfirm } from "./components/screens/BookSteps.jsx";
+import { BookStepService, BookStepConfigure, BookStepTime, BookStepConfirm } from "./components/screens/BookSteps.jsx";
 import MyReservation from "./components/screens/MyReservation.jsx";
 import Celebration from "./components/shared/Celebration.jsx";
 import { ToastProvider, useToast } from "./components/shared/Toast.jsx";
@@ -328,6 +328,7 @@ function AppInner() {
   const [screen, setScreen] = useState("home");
   const [step, setStep] = useState(0);
   const [service, setService] = useState(null);
+  const [addonIds, setAddonIds] = useState([]);
   const [time, setTime] = useState(null);
   const [vehicle, setVehicle] = useState("Mi VW Vento gris · AB123CD");
   const [name] = useState("Vos");
@@ -404,6 +405,7 @@ function AppInner() {
 
   const startBooking = useCallback(() => {
     setService(null);
+    setAddonIds([]);
     setTime(null);
     setStep(0);
     setScreen("book");
@@ -412,7 +414,14 @@ function AppInner() {
   const confirmBooking = useCallback(async () => {
     setConfirming(true);
     try {
-      const created = await createReservation({ name, vehicle, tier, service: service.id, time });
+      const created = await createReservation({
+        name,
+        vehicle,
+        tier,
+        service: service.id,
+        addons: addonIds,
+        time,
+      });
       setMyId(created.id);
       setScreen("myres");
       setStep(0);
@@ -424,7 +433,7 @@ function AppInner() {
     } finally {
       setConfirming(false);
     }
-  }, [name, vehicle, tier, service, time, toast]);
+  }, [name, vehicle, tier, service, time, addonIds, toast]);
 
   const showSplash = !minTimeUp || bootLoading;
 
@@ -453,24 +462,37 @@ function AppInner() {
 
           {screen === "book" && step === 0 && (
             <motion.div key="book-0" {...screenProps}>
-              <BookStepService onBack={() => navigate("home")} onSelect={(s) => { setService(s); setStep(1); }} />
+              <BookStepService onBack={() => navigate("home")} onSelect={(s) => { setService(s); setAddonIds([]); setStep(1); }} />
             </motion.div>
           )}
 
           {screen === "book" && step === 1 && (
             <motion.div key="book-1" {...screenProps}>
-              <BookStepTime service={service} onBack={() => setStep(0)} onSelect={(t) => { setTime(t); setStep(2); }} />
+              <BookStepConfigure
+                service={service}
+                addonIds={addonIds}
+                onToggleAddon={(id) => setAddonIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))}
+                onBack={() => setStep(0)}
+                onConfirm={() => setStep(2)}
+              />
             </motion.div>
           )}
 
           {screen === "book" && step === 2 && (
             <motion.div key="book-2" {...screenProps}>
+              <BookStepTime service={service} addonIds={addonIds} onBack={() => setStep(1)} onSelect={(t) => { setTime(t); setStep(3); }} />
+            </motion.div>
+          )}
+
+          {screen === "book" && step === 3 && (
+            <motion.div key="book-3" {...screenProps}>
               <BookStepConfirm
                 service={service}
+                addonIds={addonIds}
                 time={time}
                 vehicle={vehicle}
                 setVehicle={setVehicle}
-                onBack={() => setStep(1)}
+                onBack={() => setStep(2)}
                 onConfirm={confirmBooking}
                 loading={confirming}
               />
