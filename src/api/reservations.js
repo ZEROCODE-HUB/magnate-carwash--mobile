@@ -1,6 +1,6 @@
 // Capa de datos de la app CLIENTE — habla por HTTP con el servidor real.
 // Cambiar API_URL si el backend corre en otro host (ej. producción).
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 export async function fetchReservations() {
   const res = await fetch(`${API_URL}/api/reservations`);
