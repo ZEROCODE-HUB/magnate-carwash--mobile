@@ -10,6 +10,8 @@ import Pressable from "../shared/Pressable.jsx";
 import RippleButton from "../shared/Ripple.jsx";
 import CountUp from "../shared/CountUp.jsx";
 import { useToast } from "../shared/Toast.jsx";
+import imgCarwash1 from "../../imagenes/carwash/carwash-1.jpeg";
+import imgCarwash2 from "../../imagenes/carwash/carwash-2.jpeg";
 
 // ─────────────────────────────────────────────────────────────
 // Barra de progreso de pasos — cálida y con vida
@@ -131,7 +133,6 @@ export function BookStepService({ onBack, onSelect }) {
       >
         {SERVICES.map((s) => {
           const isSel = selected === s.id;
-          const [g0, g1, g2] = s.gradient;
           return (
             <motion.div key={s.id} variants={itemVariants}>
               <Pressable
@@ -156,8 +157,10 @@ export function BookStepService({ onBack, onSelect }) {
                   className="sheen"
                   style={{
                     position: "relative",
-                    height: 150,
-                    background: `linear-gradient(150deg, ${g0} 0%, ${g1} 55%, ${g2} 100%)`,
+                    height: 200,
+                    backgroundImage: `url(${s.id % 2 === 0 ? imgCarwash1 : imgCarwash2})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
                     display: "flex",
                     alignItems: "flex-end",
                     justifyContent: "center",
@@ -643,7 +646,9 @@ export function BookStepConfirm({ service, addonIds, time, vehicle, setVehicle, 
           position: "relative",
           overflow: "hidden",
           borderRadius: T.rLg,
-          background: `linear-gradient(140deg, ${service?.gradient[0]} 0%, ${service?.gradient[1]} 55%, ${service?.gradient[2]} 100%)`,
+          backgroundImage: `url(${service?.id % 2 === 0 ? imgCarwash1 : imgCarwash2})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           padding: "16px 18px",
           display: "flex",
           alignItems: "center",
@@ -652,7 +657,7 @@ export function BookStepConfirm({ service, addonIds, time, vehicle, setVehicle, 
           boxShadow: T.shadowCard,
         }}
       >
-        <div style={{ position: "absolute", top: -40, right: -20, width: 120, height: 120, borderRadius: 999, background: `radial-gradient(circle, ${service?.glow}, transparent 68%)`, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%)", pointerEvents: "none" }} />
         <motion.span
           style={{
             width: 54,
