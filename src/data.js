@@ -99,7 +99,7 @@ export const TIER_META = {
 };
 
 export const CATEGORIES = [
-  { id: "carwash", name: "Lavadero", icon: Car, live: true },
+  { id: "carwash", name: "Lavadero", icon: Car, live: true, tagline: "Tu auto como nuevo" },
   { id: "hamburgueseria", name: "Hamburguesería", icon: UtensilsCrossed, live: true, rubro: "restaurant", tagline: "Lo mejor de la parrilla" },
   { id: "cafeteria", name: "Cafetería", icon: Coffee, live: true, rubro: "cafeteria", tagline: "Tu break café ideal" },
   { id: "kiosco", name: "Kiosco", icon: ShoppingBag, live: true, rubro: "kiosco", tagline: "Snacks rápidos & más" },

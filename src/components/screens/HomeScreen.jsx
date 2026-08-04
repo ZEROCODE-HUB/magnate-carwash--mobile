@@ -308,22 +308,20 @@ export default function HomeScreen({ onPickCarwash, onPickCategory, myReservatio
                      />
                    )}
 
-                  <div style={{ position: "relative", inset: 0, padding: 16, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 6 }}>
-                    <div>
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 11px", borderRadius: 999, background: isCarwash ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.92)", backdropFilter: "blur(6px)", fontFamily: T.fontBody, fontSize: 10, fontWeight: 700, color: isCarwash ? "#fff" : T.ink, letterSpacing: 0.4 }}>
-                        <Icon size={11} color={isCarwash ? T.accentBright : T.primary} /> {c.name.toUpperCase()}
-                      </div>
-                      {!isCarwash && (
-                        <div style={{ fontFamily: T.fontDisplay, fontWeight: 700, fontSize: 19, color: "#fff", letterSpacing: -0.4, textShadow: "0 2px 6px rgba(0,0,0,0.5)" }}>
+<div style={{ position: "relative", inset: 0, padding: 16, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 6 }}>
+                      <div>
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 11px", borderRadius: 999, background: isCarwash ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.92)", backdropFilter: "blur(6px)", fontFamily: T.fontBody, fontSize: 10, fontWeight: 700, color: isCarwash ? "#fff" : T.ink, letterSpacing: 0.4 }}>
+                          <Icon size={11} color={isCarwash ? T.accentBright : T.primary} /> {c.name.toUpperCase()}
+                        </div>
+                        <div style={{ fontFamily: T.fontDisplay, fontWeight: 700, fontSize: 19, color: "#fff", letterSpacing: -0.4, textShadow: "0 2px 6px rgba(0,0,0,0.5)", marginTop: 6 }}>
                           {c.name}
                         </div>
-                      )}
-                      {c.tagline && (
-                        <div style={{ fontFamily: T.fontBody, fontSize: 11.5, color: "rgba(255,255,255,0.85)", lineHeight: 1.4, maxWidth: "80%", textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
-                          {c.tagline}
-                        </div>
-                      )}
-                    </div>
+                        {c.tagline && (
+                          <div style={{ fontFamily: T.fontBody, fontSize: 11.5, color: "rgba(255,255,255,0.85)", lineHeight: 1.4, maxWidth: "80%", textShadow: "0 1px 3px rgba(0,0,0,0.4)", marginTop: 2 }}>
+                            {c.tagline}
+                          </div>
+                        )}
+                      </div>
                     {live ? (
                       <motion.div
                         whileHover={{ x: 2 }}
