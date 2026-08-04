@@ -281,7 +281,7 @@ export default function HomeScreen({ onPickCarwash, onPickCategory, myReservatio
                     overflow: "hidden",
                     position: "relative",
                     boxShadow: live ? T.shadowLift : "none",
-                      height: 120,
+                    height: 160,
                   }}
                 >
                   {!isCarwash && (
@@ -296,15 +296,17 @@ export default function HomeScreen({ onPickCarwash, onPickCategory, myReservatio
                       }}
                     />
                   )}
-                  {isCarwash && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background: T.gradHero,
-                      }}
-                    />
-                  )}
+                   {isCarwash && (
+                     <div
+                       style={{
+                         position: "absolute",
+                         inset: 0,
+                         backgroundImage: `url(${CATEGORY_IMAGES.carwash})`,
+                         backgroundSize: "cover",
+                         backgroundPosition: "center",
+                       }}
+                     />
+                   )}
 
                   <div style={{ position: "relative", inset: 0, padding: 16, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 6 }}>
                     <div>
