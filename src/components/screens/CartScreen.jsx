@@ -12,11 +12,13 @@ import { useToast } from "../shared/Toast.jsx";
 import imgRestaurant from "../../imagenes/restaurante/restaurante-1.jpeg";
 import imgCafe from "../../imagenes/cafe/cafe-1.jpeg";
 import imgKiosco from "../../imagenes/restaurante/restaurante-2.jpeg";
+import imgCarwash from "../../imagenes/carwash/carwash-1.jpeg";
 
 const CATEGORY_IMAGES = {
   restaurant: imgRestaurant,
   cafeteria: imgCafe,
   kiosco: imgKiosco,
+  carwash: imgCarwash,
 };
 
 function Counter({ qty, onAdd, onRemove, stock = 99 }) {

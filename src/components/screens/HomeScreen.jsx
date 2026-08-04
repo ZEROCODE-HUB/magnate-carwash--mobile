@@ -6,6 +6,7 @@ import { CATEGORIES, STATUS_META, STATUS_FLOW, ORDER_STATUS_META, ORDER_STATUS_F
 import imgRestaurant from "../../imagenes/restaurante/restaurante-1.jpeg";
 import imgCafe from "../../imagenes/cafe/cafe-1.jpeg";
 import imgKiosco from "../../imagenes/restaurante/restaurante-2.jpeg";
+import imgCarwash from "../../imagenes/carwash/carwash-1.jpeg";
 import { itemVariants, EASE, SPRING_SNAPPY } from "../../motion.js";
 import Pressable from "../shared/Pressable.jsx";
 import SectionTitle from "../shared/SectionTitle.jsx";
@@ -123,6 +124,7 @@ const CATEGORY_IMAGES = {
   restaurant: imgRestaurant,
   cafeteria: imgCafe,
   kiosco: imgKiosco,
+  carwash: imgCarwash,
 };
 
 function LiveOrderCard({ order, onViewOrder }) {

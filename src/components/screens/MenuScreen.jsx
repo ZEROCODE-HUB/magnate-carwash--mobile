@@ -12,11 +12,13 @@ import { fetchMenu } from "../../api/orders.js";
 import imgRestaurant from "../../imagenes/restaurante/restaurante-1.jpeg";
 import imgCafe from "../../imagenes/cafe/cafe-1.jpeg";
 import imgKiosco from "../../imagenes/restaurante/restaurante-2.jpeg";
+import imgCarwash from "../../imagenes/carwash/carwash-1.jpeg";
 
 const CATEGORY_IMAGES = {
   restaurant: imgRestaurant,
   cafeteria: imgCafe,
   kiosco: imgKiosco,
+  carwash: imgCarwash,
 };
 
 export default function MenuScreen({ categoria, onBack, onPickItem, cartCount, onGoToCart }) {
@@ -149,16 +151,16 @@ export default function MenuScreen({ categoria, onBack, onPickItem, cartCount, o
                 onPress={() => onPickItem(it)}
                 lift={4}
                 tapScale={0.985}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  cursor: "pointer",
-                  borderRadius: T.rXl,
-                  overflow: "hidden",
-                  position: "relative",
-                  boxShadow: T.shadowCard,
-                  height: 160,
-                }}
+                  style={{
+                    width: "100%",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    borderRadius: T.rXl,
+                    overflow: "hidden",
+                    position: "relative",
+                    boxShadow: T.shadowCard,
+                    height: 200,
+                  }}
               >
                 <div
                   style={{
