@@ -98,7 +98,7 @@ export default function CartScreen({ categoria, cart, setCart, onBack, onConfirm
       {/* Hero compacto con imagen del rubro */}
       <div
         style={{
-          height: 100,
+          height: 160,
           borderRadius: T.rXl,
           overflow: "hidden",
           position: "relative",

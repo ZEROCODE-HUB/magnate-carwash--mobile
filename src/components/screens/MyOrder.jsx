@@ -79,11 +79,11 @@ export default function MyOrder({ order, categoria, onBack, ready, onOrderMore }
       <div style={{ display: "flex", flexDirection: "column", gap: 18, paddingBottom: 100 }}>
         <div
           style={{
-            height: 120,
+            height: 200,
             borderRadius: T.rXl,
             overflow: "hidden",
             position: "relative",
-            backgroundImage: `url(${imgRestaurant})`,
+            backgroundImage: `url(${CATEGORY_IMAGES[categoria] || CATEGORY_IMAGES.carwash})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             boxShadow: T.shadowCard,
@@ -130,7 +130,7 @@ export default function MyOrder({ order, categoria, onBack, ready, onOrderMore }
       {/* Hero con imagen del rubro */}
       <div
         style={{
-          height: 130,
+          height: 200,
           borderRadius: T.rXl,
           overflow: "hidden",
           position: "relative",
