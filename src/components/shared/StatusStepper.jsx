@@ -5,15 +5,19 @@ import { STATUS_FLOW, STATUS_META } from "../../data.js";
 import { T } from "../../theme.js";
 import { EASE, SPRING_SNAPPY } from "../../motion.js";
 
-export default function StatusStepper({ status }) {
-  const idx = Math.max(0, STATUS_FLOW.indexOf(status));
-  const CurrentIcon = STATUS_META[status]?.icon;
+export default function StatusStepper({ status, flow, meta }) {
+  const f = flow || STATUS_FLOW;
+  const m = meta || STATUS_META;
+  const idx = Math.max(0, f.indexOf(status));
+  const CurrentIcon = m[status]?.icon;
 
   return (
     <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-      {STATUS_FLOW.map((s, i) => {
+      {f.map((s, i) => {
         const done = i < idx;
         const current = i === idx;
+        const tint = m[s]?.color || T.primary;
+        const tintBg = m[s]?.bg || T.primarySoft;
         return (
           <React.Fragment key={s}>
             <motion.span
@@ -28,11 +32,11 @@ export default function StatusStepper({ status }) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: done || current ? T.primary : "#E8DECD",
+                background: done || current ? tint : "#E8DECD",
                 color: "#fff",
                 position: "relative",
                 zIndex: 1,
-                boxShadow: done || current ? `0 4px 10px -4px ${T.primary}` : "none",
+                boxShadow: done || current ? `0 4px 10px -4px ${tint}` : "none",
               }}
             >
               {done ? (
@@ -49,13 +53,13 @@ export default function StatusStepper({ status }) {
                 />
               )}
             </motion.span>
-            {i < STATUS_FLOW.length - 1 && (
+            {i < f.length - 1 && (
               <div style={{ flex: 1, height: 3, borderRadius: 2, background: T.line, overflow: "hidden", minWidth: 6 }}>
                 <motion.div
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: i < idx ? 1 : 0 }}
                   transition={{ duration: 0.45, ease: EASE, delay: 0.1 + i * 0.06 }}
-                  style={{ transformOrigin: "left", height: "100%", background: T.primary }}
+                  style={{ transformOrigin: "left", height: "100%", background: tint }}
                 />
               </div>
             )}

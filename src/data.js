@@ -1,6 +1,6 @@
 import { Car, Coffee, UtensilsCrossed, ShoppingBag, Droplets, Wind, Sparkles,
   CircleDot, TimerReset, CheckCircle2, Crown, Award, Medal, Shield, Zap,
-  Sun, Gauge, Feather, Brush, Leaf, Flower2, Cog, Trophy } from "lucide-react";
+  Sun, Gauge, Feather, Brush, Leaf, Flower2, Cog, Trophy, Clock, PackageCheck, HandPlatter, Store } from "lucide-react";
 import { T } from "./theme.js";
 
 export const STATUS_FLOW = ["Reservado", "Recibido", "Lavando", "Aspirado", "Detailing", "Secado", "Listo"];
@@ -100,7 +100,27 @@ export const TIER_META = {
 
 export const CATEGORIES = [
   { id: "carwash", name: "Lavadero", icon: Car, live: true },
-  { id: "hamburgueseria", name: "Hamburguesería", icon: UtensilsCrossed, live: false },
-  { id: "cafeteria", name: "Cafetería", icon: Coffee, live: false },
-  { id: "kiosco", name: "Kiosco", icon: ShoppingBag, live: false },
+  { id: "hamburgueseria", name: "Hamburguesería", icon: UtensilsCrossed, live: true, rubro: "restaurant", tagline: "Lo mejor de la parrilla" },
+  { id: "cafeteria", name: "Cafetería", icon: Coffee, live: true, rubro: "cafeteria", tagline: "Tu break café ideal" },
+  { id: "kiosco", name: "Kiosco", icon: ShoppingBag, live: true, rubro: "kiosco", tagline: "Snacks rápidos & más" },
 ];
+
+// ─────────────────────────────────────────────────────────────
+// Flujo de estados para pedidos de COMIDA
+// (distinto al del lavado — proceso de cocina/servicio)
+// ─────────────────────────────────────────────────────────────
+export const ORDER_STATUS_FLOW = ["Recibido", "En preparación", "Listo para retirar", "Entregado"];
+
+export const ORDER_STATUS_META = {
+  "Recibido": { color: "#6B7B76", bg: "#EDF0EF", icon: TimerReset },
+  "En preparación": { color: T.primary, bg: T.primarySoft, icon: Sparkles },
+  "Listo para retirar": { color: T.accentDark, bg: T.accentSoft, icon: PackageCheck },
+  "Entregado": { color: T.success, bg: T.successSoft, icon: CheckCircle2 },
+};
+
+// Metadatos visuales por categoría de menú (colores) — imágenes importadas en HomeScreen
+export const MENU_CATEGORY_META = {
+  restaurant: { name: "Restaurante", icon: UtensilsCrossed, color: T.violet, bg: T.violetSoft },
+  cafeteria: { name: "Cafetería", icon: Coffee, color: T.info, bg: T.infoSoft },
+  kiosco: { name: "Kiosco", icon: ShoppingBag, color: T.warning, bg: T.warningSoft },
+};

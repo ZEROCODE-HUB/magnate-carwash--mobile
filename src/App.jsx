@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutGrid, Car, Crown, X } from "lucide-react";
+import { LayoutGrid, Car, Crown, X, ShoppingBag } from "lucide-react";
 import { T } from "./theme.js";
 import { TIER_META } from "./data.js";
 import { screenVariants, EASE, SPRING_SNAPPY } from "./motion.js";
@@ -8,9 +8,13 @@ import EagleMark from "./components/shared/EagleMark.jsx";
 import HomeScreen from "./components/screens/HomeScreen.jsx";
 import { BookStepService, BookStepConfigure, BookStepTime, BookStepConfirm } from "./components/screens/BookSteps.jsx";
 import MyReservation from "./components/screens/MyReservation.jsx";
+import MenuScreen from "./components/screens/MenuScreen.jsx";
+import CartScreen from "./components/screens/CartScreen.jsx";
+import MyOrder from "./components/screens/MyOrder.jsx";
 import Celebration from "./components/shared/Celebration.jsx";
 import { ToastProvider, useToast } from "./components/shared/Toast.jsx";
 import { fetchReservations, createReservation, subscribeToReservations } from "./api/reservations.js";
+import { createOrder, subscribeToOrders } from "./api/orders.js";
 
 const screenProps = { variants: screenVariants, initial: "initial", animate: "enter", exit: "exit", className: "screen-stage" };
 
@@ -173,11 +177,12 @@ function ErrorBanner({ error, onClose }) {
   );
 }
 
-function BottomNav({ screen, tier, onNavigate, hasReservation }) {
+function BottomNav({ screen, tier, onNavigate, hasReservation, hasOrder }) {
   const tierMeta = TIER_META[tier];
   const items = [
     { id: "home", label: "Inicio", icon: LayoutGrid, interactive: true },
     { id: "myres", label: "Mi lavado", icon: Car, interactive: true, badge: hasReservation },
+    { id: "myorder", label: "Mi pedido", icon: ShoppingBag, interactive: true, badge: hasOrder },
     { id: "tier", label: tier, icon: Crown, interactive: false, color: tierMeta.color },
   ];
 
@@ -335,7 +340,9 @@ function AppInner() {
   const [tier] = useState("Oro");
 
   const [reservations, setReservations] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [myId, setMyId] = useState(null);
+  const [myOrderId, setMyOrderId] = useState(null);
   const [connected, setConnected] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [bootLoading, setBootLoading] = useState(true);
@@ -343,9 +350,16 @@ function AppInner() {
   const [error, setError] = useState(null);
   const [celebrated, setCelebrated] = useState(false);
   const [readyCelebrated, setReadyCelebrated] = useState(false);
+  const [orderCelebrated, setOrderCelebrated] = useState(false);
+  const [orderReadyCelebrated, setOrderReadyCelebrated] = useState(false);
+
+  const [orderCategoria, setOrderCategoria] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [orderConfirming, setOrderConfirming] = useState(false);
 
   const scrollRef = useRef(null);
   const prevStatus = useRef(null);
+  const prevOrderStatus = useRef(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -395,8 +409,31 @@ function AppInner() {
   }, [myReservation, toast]);
 
   useEffect(() => {
+    let alive = true;
+    const unsubscribe = subscribeToOrders((data) => {
+      if (alive) setOrders(data);
+    });
+    return () => {
+      alive = false;
+      unsubscribe();
+    };
+  }, []);
+
+  const myOrder = orders.find((o) => o.id === myOrderId);
+
+  useEffect(() => {
+    const s = myOrder?.status;
+    if (s && prevOrderStatus.current && prevOrderStatus.current !== "Entregado" && s === "Entregado") {
+      setOrderReadyCelebrated(true);
+      toast("¡Tu pedido está listo para retirar!", "success");
+      setTimeout(() => setOrderReadyCelebrated(false), 3200);
+    }
+    if (s) prevOrderStatus.current = s;
+  }, [myOrder, toast]);
+
+  useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, [screen, step]);
+  }, [screen, step, orderCategoria]);
 
   const navigate = useCallback((next) => {
     if (next === screen) return;
@@ -435,6 +472,32 @@ function AppInner() {
     }
   }, [name, vehicle, tier, service, time, addonIds, toast]);
 
+  const startOrder = useCallback((categoria) => {
+    setOrderCategoria(categoria);
+    setScreen("menu");
+  }, []);
+
+  const confirmOrder = useCallback(async (cartItems) => {
+    setOrderConfirming(true);
+    try {
+      const created = await createOrder({
+        items: cartItems.map((c) => ({ id: c.id, qty: c.qty })),
+        name,
+        categoria: orderCategoria,
+      });
+      setMyOrderId(created.id);
+      setCart([]);
+      setScreen("myorder");
+      setOrderCelebrated(true);
+      toast("Pedido confirmado", "success");
+      setTimeout(() => setOrderCelebrated(false), 3200);
+    } catch (e) {
+      toast("No se pudo confirmar el pedido. Intentá de nuevo.", "error", { duration: 3400 });
+    } finally {
+      setOrderConfirming(false);
+    }
+  }, [name, orderCategoria, toast]);
+
   const showSplash = !minTimeUp || bootLoading;
 
   return (
@@ -453,8 +516,11 @@ function AppInner() {
             <motion.div key="home" {...screenProps}>
               <HomeScreen
                 onPickCarwash={startBooking}
+                onPickCategory={startOrder}
                 myReservation={myReservation}
                 onViewRes={() => navigate("myres")}
+                myOrder={myOrder}
+                onViewOrder={() => navigate("myorder")}
                 bootLoading={bootLoading}
               />
             </motion.div>
@@ -510,12 +576,63 @@ function AppInner() {
               />
             </motion.div>
           )}
+
+          {screen === "menu" && orderCategoria && (
+            <motion.div key="menu" {...screenProps}>
+              <MenuScreen
+                categoria={orderCategoria}
+                cart={cart}
+                onBack={() => setScreen("home")}
+                onPickItem={(it) => setCart((prev) => {
+                  const existing = prev.find((c) => c.id === it.id);
+                  if (existing) {
+                    return prev.map((c) => (c.id === it.id ? { ...c, qty: c.qty + 1 } : c));
+                  }
+                  return [...prev, { ...it, qty: 1 }];
+                })}
+                cartCount={cart.reduce((sum, c) => sum + c.qty, 0)}
+                onGoToCart={() => setScreen("cart")}
+              />
+            </motion.div>
+          )}
+
+          {screen === "cart" && orderCategoria && (
+            <motion.div key="cart" {...screenProps}>
+              <CartScreen
+                categoria={orderCategoria}
+                cart={cart}
+                setCart={setCart}
+                onBack={() => setScreen("menu")}
+                onConfirm={confirmOrder}
+                loading={orderConfirming}
+              />
+            </motion.div>
+          )}
+
+          {screen === "myorder" && (
+            <motion.div key="myorder" {...screenProps}>
+              <MyOrder
+                order={myOrder}
+                categoria={orderCategoria}
+                onBack={() => navigate("home")}
+                ready={myOrder?.status === "Entregado"}
+                onOrderMore={() => { setCart([]); setOrderCategoria(null); setScreen("home"); }}
+              />
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
-      <BottomNav screen={screen} tier={tier} onNavigate={navigate} hasReservation={!!myReservation} />
+      <BottomNav
+        screen={screen}
+        tier={tier}
+        onNavigate={navigate}
+        hasReservation={!!myReservation}
+        hasOrder={!!myOrder}
+      />
 
       <Celebration trigger={celebrated || readyCelebrated} message={readyCelebrated ? "¡Tu auto está listo!" : "Reserva confirmada"} />
+      <Celebration trigger={orderCelebrated || orderReadyCelebrated} message={orderReadyCelebrated ? "¡Tu pedido está listo!" : "Pedido confirmado"} />
     </div>
   );
 }

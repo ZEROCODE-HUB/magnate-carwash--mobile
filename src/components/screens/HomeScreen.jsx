@@ -1,8 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, Radio, Crown, ArrowRight, Sparkles } from "lucide-react";
+import { ChevronRight, Radio, Crown, ArrowRight, Sparkles, ShoppingBag, Coffee, UtensilsCrossed } from "lucide-react";
 import { T } from "../../theme.js";
-import { CATEGORIES, STATUS_META, STATUS_FLOW } from "../../data.js";
+import { CATEGORIES, STATUS_META, STATUS_FLOW, ORDER_STATUS_META, ORDER_STATUS_FLOW, MENU_CATEGORY_META } from "../../data.js";
+import imgRestaurant from "../../imagenes/restaurante/restaurante-1.jpeg";
+import imgCafe from "../../imagenes/cafe/cafe-1.jpeg";
+import imgKiosco from "../../imagenes/restaurante/restaurante-2.jpeg";
 import { itemVariants, EASE, SPRING_SNAPPY } from "../../motion.js";
 import Pressable from "../shared/Pressable.jsx";
 import SectionTitle from "../shared/SectionTitle.jsx";
@@ -116,95 +119,238 @@ function LiveReservationCard({ reservation, onViewRes }) {
   );
 }
 
-export default function HomeScreen({ onPickCarwash, myReservation, onViewRes, bootLoading }) {
+const CATEGORY_IMAGES = {
+  restaurant: imgRestaurant,
+  cafeteria: imgCafe,
+  kiosco: imgKiosco,
+};
+
+function LiveOrderCard({ order, onViewOrder }) {
+  const meta = ORDER_STATUS_META[order.status];
+  const Icon = meta?.icon;
+  const idx = ORDER_STATUS_FLOW.indexOf(order.status);
+  const progress = Math.round(((idx + 1) / ORDER_STATUS_FLOW.length) * 100);
+  const catMeta = MENU_CATEGORY_META[order.categoria] || {};
+  const totalItems = order.items.reduce((sum, i) => sum + i.qty, 0);
+  const orderTotal = order.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+  return (
+    <motion.div variants={itemVariants}>
+      <Pressable
+        onPress={onViewOrder}
+        lift={3}
+        style={{
+          width: "100%",
+          textAlign: "left",
+          borderRadius: T.rXl,
+          padding: 16,
+          background: "linear-gradient(150deg, #2A1C13 0%, #1B110B 62%, #231024 100%)",
+          color: "white",
+          border: "1px solid rgba(246,190,92,0.22)",
+          cursor: "pointer",
+          position: "relative",
+          overflow: "hidden",
+          boxShadow: "0 20px 44px -20px rgba(62,21,43,0.7)",
+        }}
+      >
+        <div style={{ position: "absolute", top: -44, right: -34, width: 150, height: 150, borderRadius: 999, background: "radial-gradient(circle, rgba(246,190,92,0.22), transparent 68%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: -56, left: -36, width: 140, height: 140, borderRadius: 999, background: "radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%)", pointerEvents: "none" }} />
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "5px 12px",
+              borderRadius: 999,
+              background: meta?.bg || "rgba(255,255,255,0.12)",
+              color: meta?.color ? meta.color : "rgba(255,255,255,0.8)",
+              fontFamily: T.fontMono,
+              fontSize: 10.5,
+              fontWeight: 600,
+              letterSpacing: 0.4,
+            }}
+          >
+            <Radio size={10} /> {order.status.toUpperCase()}
+          </span>
+          <motion.span
+            whileHover={{ x: 3 }}
+            transition={SPRING_SNAPPY}
+            style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.88)", fontSize: 12, fontFamily: T.fontBody, fontWeight: 600 }}
+          >
+            Ver seguimiento <ChevronRight size={16} />
+          </motion.span>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 13, marginTop: 14, position: "relative" }}>
+          <span
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 16,
+              background: "rgba(255,255,255,0.12)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          >
+            <Icon size={20} color={meta?.color || T.accentBright} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: T.fontDisplay, fontWeight: 600, fontSize: 16.5, letterSpacing: -0.3 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 999, background: catMeta.color || T.primary, flexShrink: 0 }} />
+              {catMeta.name || order.categoria}
+            </div>
+            <div style={{ fontFamily: T.fontBody, fontSize: 11.5, color: "rgba(255,255,255,0.68)", marginTop: 2 }}>
+              {totalItems} {totalItems === 1 ? "producto" : "productos"} · ${orderTotal.toLocaleString("es-AR")}
+            </div>
+          </div>
+          <motion.div
+            key={progress}
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={SPRING_SNAPPY}
+            style={{ textAlign: "right" }}
+          >
+            <div style={{ fontFamily: T.fontDisplay, fontWeight: 700, fontSize: 19, color: T.accentBright }}>{progress}%</div>
+            <div style={{ fontFamily: T.fontMono, fontSize: 8.5, color: "rgba(255,255,255,0.55)", letterSpacing: 0.8 }}>LISTO</div>
+          </motion.div>
+        </div>
+
+        <div style={{ marginTop: 15, height: 6, borderRadius: 999, background: "rgba(255,255,255,0.14)", overflow: "hidden", position: "relative" }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.9, ease: EASE, delay: 0.15 }}
+            style={{
+              height: "100%",
+              borderRadius: 999,
+              background: T.gradAccent,
+              boxShadow: "0 0 14px rgba(246,190,92,0.7)",
+            }}
+          />
+        </div>
+      </Pressable>
+    </motion.div>
+  );
+}
+
+export default function HomeScreen({ onPickCarwash, onPickCategory, myReservation, myOrder, onViewRes, onViewOrder, bootLoading }) {
   if (bootLoading) {
     return <ScreenSkeleton lines={3} />;
   }
 
   return (
-    <>
-      {myReservation && <LiveReservationCard reservation={myReservation} onViewRes={onViewRes} />}
+      <>
+        {myReservation && <LiveReservationCard reservation={myReservation} onViewRes={onViewRes} />}
+        {myOrder && <LiveOrderCard order={myOrder} onViewOrder={onViewOrder} />}
 
-      <SectionTitle sub="Todo lo de Magnate en un solo lugar" accent="hoy" style={myReservation ? { marginTop: 22 } : undefined}>
-        ¿Qué querés hacer
-      </SectionTitle>
+        <SectionTitle sub="Todo lo de Magnate en un solo lugar" accent="hoy" style={myReservation || myOrder ? { marginTop: 22 } : undefined}>
+          ¿Qué querés hacer
+        </SectionTitle>
 
-      <motion.div
-        initial="hidden"
-        animate="show"
-        variants={{ show: { transition: { staggerChildren: 0.07 } } }}
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}
-      >
-        {CATEGORIES.map((c) => {
-          const live = c.live;
-          return (
-            <motion.div key={c.id} variants={itemVariants}>
-              <Pressable
-                onPress={live ? onPickCarwash : undefined}
-                lift={live ? 4 : 0}
-                tapScale={live ? 0.97 : 1}
-                style={{
-                  ...(!live && { pointerEvents: "none" }),
-                  width: "100%",
-                  textAlign: "left",
-                  background: live ? T.gradCard : "#F0E9DC",
-                  border: `1px solid ${T.line}`,
-                  borderRadius: T.rLg,
-                  padding: 15,
-                  cursor: live ? "pointer" : "default",
-                  opacity: live ? 1 : 0.6,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                  alignItems: "flex-start",
-                  boxShadow: live ? T.shadowCard : "none",
-                }}
-              >
-                <motion.div
-                  whileHover={live ? { scale: 1.1, rotate: -5 } : undefined}
-                  whileTap={live ? { scale: 0.9 } : undefined}
-                  transition={SPRING_SNAPPY}
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={{ show: { transition: { staggerChildren: 0.07 } } }}
+          style={{ display: "flex", flexDirection: "column", gap: 13 }}
+        >
+          {CATEGORIES.map((c) => {
+            const live = c.live;
+            const isCarwash = c.id === "carwash";
+            const Icon = c.icon;
+            const meta = isCarwash ? null : MENU_CATEGORY_META[c.rubro];
+            return (
+              <motion.div key={c.id} variants={itemVariants}>
+                <Pressable
+                  onPress={live ? (isCarwash ? onPickCarwash : () => onPickCategory(c.rubro)) : undefined}
+                  lift={live ? 5 : 0}
+                  tapScale={live ? 0.97 : 1}
                   style={{
-                    width: 46,
-                    height: 46,
-                    borderRadius: 16,
-                    background: live ? T.primarySoft : "#E5DCCB",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    ...(!live && { pointerEvents: "none" }),
+                    width: "100%",
+                    textAlign: "left",
+                    borderRadius: T.rXl,
+                    cursor: live ? "pointer" : "default",
+                    opacity: live ? 1 : 0.55,
+                    overflow: "hidden",
+                    position: "relative",
+                    boxShadow: live ? T.shadowLift : "none",
+                      height: 120,
                   }}
                 >
-                  <c.icon size={21} color={live ? T.primary : T.inkFaint} />
-                </motion.div>
-                <div>
-                  <div style={{ fontFamily: T.fontBody, fontWeight: 700, fontSize: 14, color: T.ink }}>{c.name}</div>
-                </div>
-                {live ? (
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 5,
-                      fontFamily: T.fontMono,
-                      fontSize: 10,
-                      color: T.primary,
-                      fontWeight: 600,
-                      letterSpacing: 0.3,
-                      background: T.primarySofter,
-                      padding: "4px 10px",
-                      borderRadius: 999,
-                    }}
-                  >
-                    Reservar <ArrowRight size={11} />
-                  </span>
-                ) : (
-                  <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkFaint, letterSpacing: 0.3 }}>PRÓXIMAMENTE</span>
-                )}
-              </Pressable>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+                  {!isCarwash && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage: `url(${CATEGORY_IMAGES[c.rubro]})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        filter: "brightness(0.55)",
+                      }}
+                    />
+                  )}
+                  {isCarwash && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: T.gradHero,
+                      }}
+                    />
+                  )}
+
+                  <div style={{ position: "relative", inset: 0, padding: 16, height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 6 }}>
+                    <div>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 11px", borderRadius: 999, background: isCarwash ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.92)", backdropFilter: "blur(6px)", fontFamily: T.fontBody, fontSize: 10, fontWeight: 700, color: isCarwash ? "#fff" : T.ink, letterSpacing: 0.4 }}>
+                        <Icon size={11} color={isCarwash ? T.accentBright : T.primary} /> {c.name.toUpperCase()}
+                      </div>
+                      {!isCarwash && (
+                        <div style={{ fontFamily: T.fontDisplay, fontWeight: 700, fontSize: 19, color: "#fff", letterSpacing: -0.4, textShadow: "0 2px 6px rgba(0,0,0,0.5)" }}>
+                          {c.name}
+                        </div>
+                      )}
+                      {c.tagline && (
+                        <div style={{ fontFamily: T.fontBody, fontSize: 11.5, color: "rgba(255,255,255,0.85)", lineHeight: 1.4, maxWidth: "80%", textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
+                          {c.tagline}
+                        </div>
+                      )}
+                    </div>
+                    {live ? (
+                      <motion.div
+                        whileHover={{ x: 2 }}
+                        transition={SPRING_SNAPPY}
+                        style={{
+                          alignSelf: "flex-start",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 5,
+                          fontFamily: T.fontMono,
+                          fontSize: 10,
+                          fontWeight: 700,
+                          letterSpacing: 0.3,
+                          color: isCarwash ? T.onPrimary : T.primary,
+                          background: isCarwash ? T.gradAccent : "rgba(255,255,255,0.92)",
+                          padding: "6px 13px",
+                          borderRadius: 999,
+                          boxShadow: isCarwash ? T.shadowBtn : T.shadowXs,
+                        }}
+                      >
+                        {isCarwash ? "Reservar" : "Pedir"} <ArrowRight size={11} />
+                      </motion.div>
+                    ) : (
+                      <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "rgba(255,255,255,0.7)", letterSpacing: 0.3 }}>PRÓXIMAMENTE</span>
+                    )}
+                  </div>
+                </Pressable>
+              </motion.div>
+            );
+          })}
+        </motion.div>
 
       <motion.div variants={itemVariants}>
         <Pressable
