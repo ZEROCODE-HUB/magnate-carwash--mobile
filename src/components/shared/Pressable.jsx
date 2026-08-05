@@ -12,7 +12,7 @@ const Pressable = forwardRef(function Pressable(
     <motion.button
       ref={ref}
       type="button"
-      onTap={onPress}
+      onClick={onPress}
       whileHover={whileHover === undefined ? (lift ? { y: -lift } : undefined) : whileHover}
       whileTap={whileTap === undefined ? { scale: tapScale } : whileTap}
       transition={{ y: { duration: 0.22, ease: EASE }, scale: { ...SPRING_SNAPPY, duration: 0.28 } }}
