@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, ArrowRight, Plus, ChevronLeft } from "lucide-react";
 import { T } from "../../theme.js";
@@ -25,13 +25,20 @@ export default function MenuScreen({ categoria, onBack, onPickItem, cartCount, o
   const meta = MENU_CATEGORY_META[categoria] || {};
   const [items, setItems] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const loadMenu = useCallback(() => {
     setLoading(true);
+    setError(false);
     fetchMenu(categoria)
       .then((data) => setItems(data))
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [categoria]);
+
+  useEffect(() => {
+    loadMenu();
+  }, [loadMenu]);
 
   return (
     <>
@@ -122,6 +129,21 @@ export default function MenuScreen({ categoria, onBack, onPickItem, cartCount, o
       >
         <ShoppingCart size={16} /> Carrito ({cartCount})
       </div>
+
+      {!loading && error && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ ...card, textAlign: "center", padding: "38px 18px" }}>
+          <span style={{ display: "inline-flex", width: 56, height: 56, borderRadius: 999, background: T.primarySoft, alignItems: "center", justifyContent: "center", marginBottom: 10 }}>
+            <Plus size={26} color={T.primary} />
+          </span>
+          <div style={{ fontFamily: T.fontBody, fontWeight: 600, fontSize: 15, color: T.ink }}>No se pudo cargar el menú</div>
+          <div style={{ fontFamily: T.fontBody, fontSize: 12, color: T.inkSoft, marginTop: 3, lineHeight: 1.4 }}>
+            Verificá que el servidor esté activo y volvé a intentar.
+          </div>
+          <RippleButton onPress={loadMenu} className="press-cta" style={{ ...primaryBtn, marginTop: 16, width: "auto", padding: "13px 26px", gap: 8 }}>
+            Reintentar <ArrowRight size={15} />
+          </RippleButton>
+        </motion.div>
+      )}
 
       {loading && (
         <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 14 }}>
